@@ -1,7 +1,10 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import ContentHeader from '../../components/ContentHeader';
 import SelectInput from '../../components/SelectInput';
 import HistoryFinanceCard from '../../components/HistoryFinanceCard';
+
+import gains from '../../repositories/gains';
+import expenses from '../../repositories/expenses';
 
 import { Container, Content, Filters} from './styles';
 
@@ -13,30 +16,65 @@ interface IRouteParams {
   }
 }
 
-const months = [
-  {value: 7, label: 'Julho'},
-  {value: 8, label: 'Agosto'},
-  {value: 9, label: 'Setembro'}
-]
-
-const years = [
-  {value: 2020, label: 2020},
-  {value: 2019, label: 2019},
-  {value: 2018, label: 2018}
-]
+interface IData {
+  id: string;
+  description: string;
+  amountFormatted: string;
+  frequency: string;
+  dataFormatted: string;
+  tagColor: string;
+}
 
 const List: React.FC<IRouteParams> = ({ match })=> {
+
+  const [data, setData] = useState<IData[]>([]);
+
+
+
 
   const { type } = match.params;
   const title = useMemo(() => {
     return type === 'entry-balance' ? {
       title: 'Entradas',
-      lineColor: '#F7931B'
+      lineColor: '#F7931B',
+      gains
      } : {
       title: 'Saídas',
-      lineColor:'#E44C4E'
+      lineColor:'#E44C4E',
+      expenses
     }
   }, [type]);
+
+  const listData = useMemo(() => {
+    return type === 'entry-balance' ? gains : expenses
+  }, [type]);
+
+  useEffect(() => {
+    const response = listData.map(item => {
+      return {
+        id: String(Math.random () * data.length),
+        description: item.description,
+        amountFormatted: item.amount,
+        frequency: item.frequency,
+        dataFormatted: item.date,
+        tagColor:item.frequency === 'recorrente' ? '#E44C4E' : '#4E41F0'
+      }
+    })
+    setData(response);
+  });
+
+  const months = [
+    {value: 7, label: 'Julho'},
+    {value: 8, label: 'Agosto'},
+    {value: 9, label: 'Setembro'}
+  ]
+  
+  const years = [
+    {value: 2020, label: 2020},
+    {value: 2019, label: 2019},
+    {value: 2018, label: 2018}
+  ]
+  
 
   return(
     <Container>
@@ -59,12 +97,17 @@ const List: React.FC<IRouteParams> = ({ match })=> {
         </button>
       </Filters>
       <Content>
-        <HistoryFinanceCard 
-        tagColor="#e44c4e" 
-        title="Conta de Luz"
-        subTitle="27/07/2020"
-        amount="R$ 130,00"
-        />
+        { 
+          data.map(item => (
+          <HistoryFinanceCard 
+            key={item.id}
+            tagColor={item.tagColor} 
+            title={item.description}
+            subTitle={item.dataFormatted}
+            amount={item.amountFormatted}
+          />
+          ))
+        }
       </Content>
     </Container>
   );
