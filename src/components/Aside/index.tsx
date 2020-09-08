@@ -5,7 +5,8 @@ import {
   LogImg,
   MenuContainer,
   MenuItemLink,
-  Title
+  Title,
+  MenuItemButton
 } from './styles';
 
 import {
@@ -15,10 +16,11 @@ import {
   MdExitToApp
 } from 'react-icons/md';
 
-
+import { useAuth } from '../../hooks/auth';
 import logoImg from '../../assets/logo.svg'
 
 const Aside: React.FC = ()=> {
+  const { singOut } = useAuth();
   return(
     <Container>
       <Header>
@@ -27,7 +29,7 @@ const Aside: React.FC = ()=> {
       </Header>
 
       <MenuContainer>
-        <MenuItemLink href="/dashboard">
+        <MenuItemLink href="/">
             <MdDashboard/>
             Dashboard
         </MenuItemLink> 
@@ -42,10 +44,10 @@ const Aside: React.FC = ()=> {
             Saidas
         </MenuItemLink> 
 
-        <MenuItemLink href="#teste">
+        <MenuItemButton onClick={ singOut }>
             <MdExitToApp />
             Sair
-        </MenuItemLink>
+        </MenuItemButton>
 
       </MenuContainer>
     </Container>
