@@ -3,12 +3,11 @@ import {
   Container, 
   Profile, 
   Welcome, 
-  UserName 
+  UserName,
 } from './styles';
 
-import Toggle from '../Toggle/index';
 import emojis from '../../utils/emojis';
-
+import Toggle from '../Toggle/index';
 import { useTheme } from '../../hooks/theme';
 
 
